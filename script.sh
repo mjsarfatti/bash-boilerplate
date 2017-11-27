@@ -96,6 +96,11 @@ main() {
 # }}}
 # Boilerplate {{{
 
+# Strip leading and trailing white space (new line inclusive).
+trim(){
+  printf "%s" "`expr "$1" : "^[[:space:]]*\(.*[^[:space:]]\)[[:space:]]*$"`"
+}
+
 # Prompt the user to interactively enter desired variable values. 
 prompt_options() {
   local desc=
@@ -116,15 +121,15 @@ prompt_options() {
       NR > 3 {
         # Check if the option longname equals the value requested and passed
         # into awk.
-        if ($1 == val) {
+        if ($2 == "--" val) {
           # Print all remaining fields, ie. the description.
-          for (i=2; i <= NF; i++) print $i
+          for (i=3; i <= NF; i++) print $i
         }
       }
     ')
     [[ ! "$desc" ]] && continue
 
-    echo -n "$desc: "
+    echo -n "$(trim "$desc"): "
 
     # In case this is a password field, hide the user input
     if [[ $val == "password" ]]; then
